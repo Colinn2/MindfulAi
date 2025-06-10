@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MindfulAI - Mental Health Journal</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+  /* Modern color palette */
+  :root {
+    --primary: #4361ee;
+    --primary-dark: #3a56d4;
+    --secondary: #f8f9fa;
+    --accent: #7209b7;
+    --text: #212529;
+    --text-light: #6c757d;
+    --border: #e9ecef;
+    --danger: #ef233c;
+    --warning: #ff9e00;
+    --success: #4cc9f0;
+    --card-bg: #ffffff;
+    --radius: 12px;
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.12);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  /* Base styles */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: var(--secondary);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  @supports (font-variation-settings: normal) {
+    body { font-family: 'Inter var', -apple-system, BlinkMacSystemFont, sans-serif; }
+  }
+
+  /* Layout */
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* Header */
+  header {
+    position: sticky;
+    top: 0;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+    box-shadow: var(--shadow-sm);
+    border-bottom: 1px solid var(--border);
+  }
+
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.25rem 0;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 800;
+    font-size: 1.5rem;
+    color: var(--primary);
+    text-decoration: none;
+  }
+
+  .logo i {
+    font-size: 1.75rem;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-weight: 600;
+    color: var(--text-light);
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    transition: var(--transition);
+  }
+
+  .nav-links a:hover, 
+  .nav-links a.active {
+    color: var(--primary);
+    background-color: rgba(67, 97, 238, 0.1);
+  }
+
+  /* Main content */
+  main {
+    padding: 3rem 0 5rem;
+  }
+
+  /* Sections */
+  .section {
+    display: none;
+    animation: fadeIn 0.4s ease-out;
+  }
+
+  .section.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Journal section */
+  .journal-container {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .date-picker {
+    margin-bottom: 1.5rem;
+  }
+
+  .date-picker input {
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    font-family: inherit;
+    width: 100%;
+    max-width: 250px;
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 200px;
+    padding: 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    resize: vertical;
+    margin-bottom: 1.5rem;
+    transition: var(--transition);
+    font-family: inherit;
+  }
+
+  textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+  }
+
+  .action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.875rem 1.5rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    border: none;
+  }
+
+  .btn-primary {
+    background-color: var(--primary);
+    color: white;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .btn-secondary {
+    background-color: var(--secondary);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+
+  .btn-secondary:hover {
+    background-color: #e9ecef;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .analysis-container {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+  }
+
+  .analysis-header {
+    background-color: var(--secondary);
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .analysis-header h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .analysis-content {
+    padding: 1.5rem;
+    background-color: var(--card-bg);
+    min-height: 150px;
+  }
+
+  .mood-tag {
+    display: inline-block;
+    padding: 0.375rem 0.75rem;
+    background-color: rgba(67, 97, 238, 0.1);
+    color: var(--primary);
+    border-radius: 50px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Warning section */
+  .warning {
+    border-left: 4px solid var(--danger);
+    background: rgba(239, 35, 60, 0.05);
+    color: var(--danger);
+    padding: 1.25rem;
+    border-radius: var(--radius);
+    margin-top: 1.5rem;
+  }
+
+  .warning h3 {
+    font-weight: 700;
+    font-size: 1.125rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .warning ul {
+    padding-left: 1.25rem;
+    margin-top: 0.75rem;
+  }
+
+  .warning li {
+    margin-bottom: 0.5rem;
+  }
+
+  .emergency-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    background: var(--danger);
+    color: white;
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius);
+    text-decoration: none;
+    transition: var(--transition);
+  }
+
+  .emergency-btn:hover {
+    background: #d00000;
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* History section */
+  .history-container {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: 2rem;
+  }
+
+  .journal-entry-card {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+    transition: var(--transition);
+  }
+
+  .journal-entry-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .entry-date {
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .view-entry {
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.875rem;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: var(--transition);
+  }
+
+  .view-entry:hover {
+    background: rgba(67, 97, 238, 0.1);
+  }
+
+  .entry-content {
+    margin-bottom: 1rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .entry-analysis {
+    background-color: var(--secondary);
+    padding: 1rem;
+    border-radius: var(--radius);
+    font-size: 0.9375rem;
+    margin-top: 1rem;
+  }
+
+  /* Insights section */
+  .insights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .insight-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: 1.5rem;
+    transition: var(--transition);
+  }
+
+  .insight-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+
+  .insight-card h3 {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  /* Charts */
+  .chart-container {
+    position: relative;
+    height: 250px;
+    width: 100%;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    padding: 2rem 0;
+    color: var(--text-light);
+    font-size: 0.875rem;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Loading animation */
+  .loading {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border: 3px solid rgba(67, 97, 238, 0.2);
+    border-radius: 50%;
+    border-top-color: var(--primary);
+    animation: spin 1s ease-in-out infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Empty states */
+  .empty-state {
+    color: var(--text-light);
+    text-align: center;
+    padding: 3rem 0;
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    nav {
+      flex-direction: column;
+      gap: 1rem;
+      padding: 1rem 0;
+    }
+
+    .nav-links {
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .date-picker input {
+      max-width: 100%;
+    }
+
+    .action-buttons {
+      flex-direction: column;
+    }
+
+    .btn {
+      width: 100%;
+    }
+
+    .insights-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Accessibility */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <nav>
+        <a href="#" class="logo">
+          <i class="fas fa-brain"></i>
+          <span>MindfulAI</span>
+        </a>
+        <ul class="nav-links">
+          <li><a href="#" class="active" id="journal-tab">Journal</a></li>
+          <li><a href="#" id="history-tab">History</a></li>
+          <li><a href="#" id="insights-tab">Insights</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section id="journal-section" class="section active">
+        <div class="journal-container">
+          <div class="date-picker">
+            <label for="journal-date" class="sr-only">Select date</label>
+            <input type="date" id="journal-date" value="">
+          </div>
+          <label for="entry" class="sr-only">Journal entry</label>
+          <textarea id="entry" placeholder="How are you feeling today? Write freely about your thoughts, emotions, and experiences..."></textarea>
+          <div class="action-buttons">
+            <button id="analyze-btn" class="btn btn-primary">
+              <i class="fas fa-robot"></i> Get AI Reflection
+            </button>
+            <button id="save-btn" class="btn btn-secondary">
+              <i class="fas fa-save"></i> Save Entry
+            </button>
+          </div>
+          <div class="analysis-container">
+            <div class="analysis-header">
+              <h3><i class="fas fa-lightbulb"></i> AI Reflection</h3>
+            </div>
+            <div id="analysis" class="analysis-content">
+              <p class="empty-state">Your AI-generated reflection will appear here...</p>
+            </div>
+            <div id="warning-section" class="warning" hidden>
+              <h3>Important: Emergency Help Recommended</h3>
+              <p>If you are experiencing suicidal thoughts, please consider contacting emergency services or a trusted person immediately.</p>
+              <a href="tel:0917-558-4673" class="emergency-btn">
+                <i class="fas fa-phone-alt"></i> Call Philippines 24/7 National Mental Health Crisis Hotline: 0917-558-4673
+              </a>
+              <p>Or try these tips:</p>
+              <ul>
+                <li>Talk to someone you trust</li>
+                <li>Avoid drugs and alcohol</li>
+                <li>Practice deep breathing or meditation</li>
+                <li>Reach out to a mental health professional</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="history-section" class="section">
+        <h2>Your Journal History</h2>
+        <div class="history-container" id="history-container">
+          <p class="empty-state">No journal entries yet. Start writing to see them here.</p>
+        </div>
+      </section>
+
+      <section id="insights-section" class="section">
+        <h2>Your Mental Health Insights</h2>
+        <div class="insights-grid">
+          <div class="insight-card mood-card">
+            <h3><i class="fas fa-smile" style="color: var(--primary);"></i> Mood Trends</h3>
+            <div class="chart-container">
+              <canvas id="mood-chart"></canvas>
+            </div>
+          </div>
+          <div class="insight-card topics-card">
+            <h3><i class="fas fa-tags" style="color: var(--accent);"></i> Frequent Topics</h3>
+            <div id="topics-list" class="empty-state">No topics identified yet</div>
+          </div>
+          <div class="insight-card progress-card">
+            <h3><i class="fas fa-chart-line" style="color: var(--success);"></i> Writing Progress</h3>
+            <div class="chart-container">
+              <canvas id="writing-chart"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Take care of your mind - it's the only one you have. ❤️</p>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // DOM Elements
+      const journalTab = document.getElementById('journal-tab');
+      const historyTab = document.getElementById('history-tab');
+      const insightsTab = document.getElementById('insights-tab');
+      const journalSection = document.getElementById('journal-section');
+      const historySection = document.getElementById('history-section');
+      const insightsSection = document.getElementById('insights-section');
+      const analyzeBtn = document.getElementById('analyze-btn');
+      const saveBtn = document.getElementById('save-btn');
+      const entryTextarea = document.getElementById('entry');
+      const analysisDiv = document.getElementById('analysis');
+      const historyContainer = document.getElementById('history-container');
+      const journalDate = document.getElementById('journal-date');
+      const warningSection = document.getElementById('warning-section');
+      
+      // Set today's date as default
+      const today = new Date().toISOString().split('T')[0];
+      journalDate.value = today;
+      
+      // Tab switching functionality
+      journalTab.addEventListener('click', function(e) {
+        e.preventDefault();
+        switchTab('journal');
+      });
+      
+      historyTab.addEventListener('click', function(e) {
+        e.preventDefault();
+        switchTab('history');
+        loadJournalHistory();
+      });
+      
+      insightsTab.addEventListener('click', function(e) {
+        e.preventDefault();
+        switchTab('insights');
+        loadInsights();
+      });
+      
+      function switchTab(tabName) {
+        // Update active tab
+        document.querySelectorAll('.nav-links a').forEach(tab => {
+          tab.classList.remove('active');
+        });
+        
+        // Hide all sections
+        document.querySelectorAll('.section').forEach(section => {
+          section.classList.remove('active');
+        });
+        
+        // Show selected section and mark tab as active
+        switch(tabName) {
+          case 'journal':
+            journalTab.classList.add('active');
+            journalSection.classList.add('active');
+            break;
+          case 'history':
+            historyTab.classList.add('active');
+            historySection.classList.add('active');
+            break;
+          case 'insights':
+            insightsTab.classList.add('active');
+            insightsSection.classList.add('active');
+            break;
+        }
+      }
+      
+      // Analyze journal entry with Gemini API
+      analyzeBtn.addEventListener('click', analyzeEntry);
+      
+      async function analyzeEntry() {
+        const entry = entryTextarea.value.trim();
+        
+        if (!entry) {
+          alert('Please write something in your journal before analyzing.');
+          return;
+        }
+        
+        // Show loading state
+        analysisDiv.innerHTML = '<div class="loading"></div> Analyzing your thoughts...';
+        analyzeBtn.disabled = true;
+        
+        try {
+          // Call Gemini API with enhanced prompt
+          const prompt = `Analyze this mental health journal entry and provide:
+1. A thoughtful, compassionate reflection (150-200 words)
+2. Mood assessment (single word like Happy, Sad, Anxious)
+3. Whether suicidal thoughts are detected (true/false)
+
+Reply in this JSON format:
+{
+  "reflection": "your reflection text here",
+  "mood": "detected mood",
+  "suicidalDetected": boolean
+}
+
+Journal entry: """${entry}"""`;
+          
+          const response = await callGeminiAPI(prompt);
+          
+          // Parse the response
+          let reflection, mood, suicidalDetected;
+          
+          try {
+            // Try to extract JSON from response
+            const jsonMatch = response.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+              const data = JSON.parse(jsonMatch[0]);
+              reflection = data.reflection;
+              mood = data.mood;
+              suicidalDetected = data.suicidalDetected;
+            } else {
+              // Fallback if JSON parsing fails
+              reflection = response;
+              mood = "Neutral";
+              suicidalDetected = response.toLowerCase().includes('suicide') || 
+                                response.toLowerCase().includes('kill myself');
+            }
+          } catch (e) {
+            console.error("Error parsing API response:", e);
+            reflection = response;
+            mood = "Neutral";
+            suicidalDetected = false;
+          }
+          
+          // Display the analysis with mood
+          analysisDiv.innerHTML = `
+            <div class="mood-tag">${mood}</div>
+            <p>${reflection}</p>
+          `;
+          
+          // Show warning if suicidal thoughts detected
+          warningSection.hidden = !suicidalDetected;
+          if (suicidalDetected) {
+            warningSection.focus();
+          }
+          
+          // Save the analysis to local storage
+          const currentEntries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+          const entryDate = journalDate.value || today;
+          
+          // Check if an entry already exists for this date
+          const existingEntryIndex = currentEntries.findIndex(e => e.date === entryDate);
+          
+          if (existingEntryIndex !== -1) {
+            // Update existing entry
+            currentEntries[existingEntryIndex].content = entry;
+            currentEntries[existingEntryIndex].analysis = reflection;
+            currentEntries[existingEntryIndex].mood = mood;
+            currentEntries[existingEntryIndex].suicidalDetected = suicidalDetected;
+          } else {
+            // Add new entry
+            currentEntries.push({
+              date: entryDate,
+              content: entry,
+              analysis: reflection,
+              mood: mood,
+              suicidalDetected: suicidalDetected
+            });
+          }
+          
+          localStorage.setItem('journalEntries', JSON.stringify(currentEntries));
+        } catch (error) {
+          console.error('Error analyzing entry:', error);
+          analysisDiv.innerHTML = '<p class="error">Sorry, there was an error analyzing your entry. Please try again.</p>';
+        } finally {
+          analyzeBtn.disabled = false;
+        }
+      }
+      
+      // Function to call Gemini API
+      async function callGeminiAPI(prompt) {
+        // Replace with your actual API key
+        const API_KEY = 'AIzaSyDeNXXOupNy_VtqQOYiX0G4x32uK4Xt2Vw';
+        const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${API_KEY}`;
+        
+        try {
+          const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              contents: [{
+                parts: [{
+                  text: prompt
+                }]
+              }],
+              generationConfig: {
+                temperature: 0.7,
+                topP: 0.9,
+                maxOutputTokens: 500
+              }
+            })
+          });
+          
+          if (!response.ok) {
+            throw new Error(`API request failed with status ${response.status}`);
+          }
+          
+          const data = await response.json();
+          
+          // Extract the generated text from the response
+          if (data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts) {
+            return data.candidates[0].content.parts[0].text;
+          } else {
+            throw new Error('Unexpected API response format');
+          }
+        } catch (error) {
+          console.error('Error calling Gemini API:', error);
+          throw error;
+        }
+      }
+      
+      // Save journal entry
+      saveBtn.addEventListener('click', function() {
+        const entry = entryTextarea.value.trim();
+        const entryDate = journalDate.value || today;
+        
+        if (!entry) {
+          alert('Please write something in your journal before saving.');
+          return;
+        }
+        
+        const currentEntries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+        const analysis = analysisDiv.textContent.includes('AI Reflection') ? analysisDiv.innerHTML : '';
+        const moodElement = analysisDiv.querySelector('.mood-tag');
+        const mood = moodElement ? moodElement.textContent : '';
+        const suicidalDetected = !warningSection.hidden;
+        
+        // Check if an entry already exists for this date
+        const existingEntryIndex = currentEntries.findIndex(e => e.date === entryDate);
+        
+        if (existingEntryIndex !== -1) {
+          // Update existing entry
+          currentEntries[existingEntryIndex].content = entry;
+          if (analysis) {
+            currentEntries[existingEntryIndex].analysis = analysis;
+            currentEntries[existingEntryIndex].mood = mood;
+            currentEntries[existingEntryIndex].suicidalDetected = suicidalDetected;
+          }
+        } else {
+          // Add new entry
+          currentEntries.push({
+            date: entryDate,
+            content: entry,
+            analysis: analysis || '',
+            mood: mood || '',
+            suicidalDetected: suicidalDetected
+          });
+        }
+        
+        localStorage.setItem('journalEntries', JSON.stringify(currentEntries));
+        
+        // Show success message
+        const successMsg = document.createElement('div');
+        successMsg.className = 'success-message';
+        successMsg.textContent = 'Journal entry saved successfully!';
+        document.body.appendChild(successMsg);
+        
+        // Remove after 3 seconds
+        setTimeout(() => {
+          successMsg.remove();
+        }, 3000);
+      });
+      
+      // Load journal history
+      function loadJournalHistory() {
+        const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+        
+        if (entries.length === 0) {
+          historyContainer.innerHTML = '<p class="empty-state">No journal entries yet. Start writing to see them here.</p>';
+          return;
+        }
+        
+        // Sort entries by date (newest first)
+        entries.sort((a, b) => new Date(b.date) - new Date(a.date));
+        
+        historyContainer.innerHTML = '';
+        
+        entries.forEach(entry => {
+          const entryCard = document.createElement('div');
+          entryCard.className = 'journal-entry-card';
+          
+          const shortContent = entry.content.length > 150 ? entry.content.substring(0, 150) + '...' : entry.content;
+          const shortAnalysis = entry.analysis && entry.analysis.length > 200 ? 
+            entry.analysis.substring(0, 200) + '...' : entry.analysis;
+          
+          entryCard.innerHTML = `
+            <div class="entry-date">
+              <span>${formatDate(entry.date)}</span>
+              <button class="view-entry" data-date="${entry.date}">View Full Entry</button>
+            </div>
+            ${entry.mood ? `<div class="mood-tag" style="margin-bottom: 0.75rem;">${entry.mood}</div>` : ''}
+            <div class="entry-content">${shortContent}</div>
+            ${entry.analysis ? `<div class="entry-analysis">${shortAnalysis}</div>` : ''}
+          `;
+          
+          historyContainer.appendChild(entryCard);
+        });
+        
+        // Add event listeners to view buttons
+        document.querySelectorAll('.view-entry').forEach(button => {
+          button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const date = this.getAttribute('data-date');
+            viewFullEntry(date);
+          });
+        });
+      }
+      
+      // View full journal entry
+      function viewFullEntry(date) {
+        const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+        const entry = entries.find(e => e.date === date);
+        
+        if (!entry) return;
+        
+        // Switch to journal tab
+        switchTab('journal');
+        
+        // Set the date and content
+        journalDate.value = entry.date;
+        entryTextarea.value = entry.content;
+        
+        // Display the analysis if it exists
+        if (entry.analysis) {
+          analysisDiv.innerHTML = entry.analysis;
+        } else {
+          analysisDiv.innerHTML = '<p class="empty-state">No AI reflection for this entry yet.</p>';
+        }
+        
+        // Show warning if suicidal thoughts were detected
+        warningSection.hidden = !entry.suicidalDetected;
+      }
+      
+      // Load insights (charts and analytics)
+      function loadInsights() {
+        const entries = JSON.parse(localStorage.getItem('journalEntries') || '[]');
+        
+        if (entries.length === 0) {
+          document.getElementById('topics-list').innerHTML = '<p class="empty-state">No data available yet. Start journaling to see insights.</p>';
+          return;
+        }
+        
+        // Initialize charts
+        initMoodChart(entries);
+        initWritingChart(entries);
+        identifyFrequentTopics(entries);
+      }
+      
+      // Initialize mood chart
+      function initMoodChart(entries) {
+        const ctx = document.getElementById('mood-chart').getContext('2d');
+        
+        // Sort entries by date
+        entries.sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        // Extract dates and word counts
+        const labels = entries.map(entry => formatDate(entry.date));
+        const wordCounts = entries.map(entry => entry.content.split(/\s+/).length);
+        
+        new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Journal Length (words)',
+              data: wordCounts,
+              borderColor: 'rgba(67, 97, 238, 1)',
+              backgroundColor: 'rgba(67, 97, 238, 0.1)',
+              tension: 0.3,
+              fill: true
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top',
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    return `${context.dataset.label}: ${context.raw}`;
+                  }
+                }
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Word Count'
+                }
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: 'Date'
+                }
+              }
+            }
+          }
+        });
+      }
+      
+      // Initialize writing frequency chart
+      function initWritingChart(entries) {
+        const ctx = document.getElementById('writing-chart').getContext('2d');
+        
+        // Group entries by month
+        const monthlyData = {};
+        entries.forEach(entry => {
+          const date = new Date(entry.date);
+          const monthYear = `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}`;
+          
+          if (!monthlyData[monthYear]) {
+            monthlyData[monthYear] = 0;
+          }
+          monthlyData[monthYear]++;
+        });
+        
+        const labels = Object.keys(monthlyData).sort();
+        const data = labels.map(label => monthlyData[label]);
+        
+        new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Entries per Month',
+              data: data,
+              backgroundColor: 'rgba(67, 97, 238, 0.7)',
+              borderColor: 'rgba(67, 97, 238, 1)',
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'top',
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: 'Number of Entries'
+                },
+                ticks: {
+                  stepSize: 1
+                }
+              }
+            }
+          }
+        });
+      }
+      
+      // Identify frequent topics (simplified version)
+      function identifyFrequentTopics(entries) {
+        const topicsList = document.getElementById('topics-list');
+        topicsList.innerHTML = '';
+        
+        // Common mental health related words to look for
+        const mentalHealthKeywords = [
+          'happy', 'sad', 'anxious', 'stress', 'relax', 'angry', 
+          'work', 'family', 'friends', 'sleep', 'exercise', 'health',
+          'worried', 'excited', 'nervous', 'calm', 'overwhelmed'
+        ];
+        
+        const topicCounts = {};
+        mentalHealthKeywords.forEach(keyword => {
+          topicCounts[keyword] = 0;
+        });
+        
+        // Count occurrences of each keyword
+        entries.forEach(entry => {
+          const content = entry.content.toLowerCase();
+          mentalHealthKeywords.forEach(keyword => {
+            if (content.includes(keyword)) {
+              topicCounts[keyword]++;
+            }
+          });
+        });
+        
+        // Filter out topics with zero occurrences
+        const activeTopics = Object.entries(topicCounts)
+          .filter(([_, count]) => count > 0)
+          .sort((a, b) => b[1] - a[1]);
+        
+        if (activeTopics.length === 0) {
+          topicsList.innerHTML = '<p class="empty-state">No frequent topics identified yet.</p>';
+          return;
+        }
+        
+        // Display top 5 topics
+        const ul = document.createElement('ul');
+        ul.style.listStyle = 'none';
+        ul.style.padding = '0';
+        ul.style.margin = '0';
+        
+        activeTopics.slice(0, 5).forEach(([topic, count]) => {
+          const li = document.createElement('li');
+          li.style.marginBottom = '0.5rem';
+          li.style.display = 'flex';
+          li.style.justifyContent = 'space-between';
+          li.style.alignItems = 'center';
+          
+          const topicSpan = document.createElement('span');
+          topicSpan.textContent = topic.charAt(0).toUpperCase() + topic.slice(1);
+          
+          const countSpan = document.createElement('span');
+          countSpan.textContent = `(${count})`;
+          countSpan.style.color = 'var(--text-light)';
+          countSpan.style.fontSize = '0.875rem';
+          
+          li.appendChild(topicSpan);
+          li.appendChild(countSpan);
+          ul.appendChild(li);
+        });
+        
+        topicsList.appendChild(ul);
+      }
+      
+      // Helper function to format date
+      function formatDate(dateString) {
+        const options = { year: 'numeric', month: 'short', day: 'numeric' };
+        return new Date(dateString).toLocaleDateString(undefined, options);
+      }
+    });
+  </script>
+</body>
+</html>
